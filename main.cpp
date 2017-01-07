@@ -11,6 +11,34 @@
 
 using namespace std;
 
+// display the data type of input image.
+void showImageInfo(cv::Mat image) {
+  switch (image.depth()) {
+  case CV_8U:  cout << " CV_8U" << endl; break; // 8byte uchar
+  case CV_8S:  cout << " CV_8S" << endl; break; // 8byte char
+  case CV_16U: cout << " CV_16U" << endl; break;// 16byte ushort
+  case CV_16S: cout << " CV_16S" << endl; break;// 16byte short
+  case CV_32S: cout << " CV_32S" << endl; break;// 32byte int
+  case CV_32F: cout << " CV_32F" << endl; break;// 32byte float
+  case CV_64F: cout << " CV_64F" << endl; break;// 64byte double
+  default: cout << " something else" << endl;// ありえない
+  }
+}
+
+// calculate :alpha: and :beta:
+void calcParams(cv::Mat image, double *alpha, double *beta) {
+  double min_, max_;
+  cv::minMaxLoc(image, &min_, &max_);
+  cout << "image pixels' min value is " << min_ <<
+  ", max value is " << max_ << endl;
+  double tmp_diff = abs(max_ - min_);
+  *alpha = tmp_diff / 255.0;
+  if (*alpha < 1.0) {
+    *alpha = 1.0 / *alpha;
+  }
+  *beta = *alpha * abs(min_);
+}
+
 void OutputBinaryImage(const std::string& filename, cv::Mat image) {
   FILE* f = fopen(filename.c_str(), "wb");
   for (int x = 0; x < image.cols; x++) {
@@ -36,7 +64,8 @@ template<typename T>
 cv::Mat LocalLaplacianFilter(const cv::Mat& input,
                              double alpha,
                              double beta,
-                             double sigma_r) {
+                             double sigma_r)
+{
   RemappingFunction r(alpha, beta);
 
   int num_levels = LaplacianPyramid::GetLevelCount(input.rows, input.cols, 30);
