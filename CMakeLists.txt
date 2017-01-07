@@ -7,7 +7,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${LLF_SOURCE_DIR}/cmake)
 set(LIB_MACROS "")
 
 # Find external libraries
-find_package(OpenCV)
+find_package(OpenCV3)
 
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
@@ -34,7 +34,7 @@ endif()
 
 include_directories(${LLF_SOURCE_DIR})
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -std=c++11 -I/usr/local/opt/opencv3/include/ -L/usr/local/opt/opencv3/lib/ -lopencv_imgproc -lopencv_imgproc -lopencv_imgcodecs -lopencv_highgui -lopencv_core -lopencv_ml")
 if (cmake_build_type_tolower STREQUAL "release")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
 endif()
