@@ -15,10 +15,10 @@
 
 class GaussianPyramid {
  public:
-  // Construct a Gaussian pyramid of the given image. The number of levels does
-  // not count the base, which is just the given image. So, the pyramid will
-  // end up having num_levels + 1 levels. The image is converted to 64-bit
-  // floating point for calculations.
+  // Construct a Gaussian pyramid of the given image.
+  // The number of levels does not count the base(given image).
+  // So, the pyramid will end up having num_levels + 1 levels.
+  // The image is converted to 64bit floating point for calculations.
   GaussianPyramid(const cv::Mat& image, int num_levels);
 
   // Indicates that this is a subimage. If the start index is odd, this is
@@ -78,7 +78,7 @@ template<typename T>
 void GaussianPyramid::PopulateTopLevel(int row_offset, int col_offset) {
   cv::Mat& previous = pyramid_[pyramid_.size() - 2];
   cv::Mat& top = pyramid_.back();
-  
+
   // Calculate the end indices, based on where (0,0) is centered on the
   // previous level.
   const int kEndRow = row_offset + 2 * top.rows;
@@ -87,7 +87,7 @@ void GaussianPyramid::PopulateTopLevel(int row_offset, int col_offset) {
     for (int x = col_offset; x < kEndCol; x += 2) {
       T value = 0;
       double total_weight = 0;
-      
+
       int row_start = std::max(0, y - 2);
       int row_end = std::min(previous.rows - 1, y + 2);
       for (int n = row_start; n <= row_end; n++) {

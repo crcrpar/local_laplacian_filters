@@ -12,10 +12,8 @@ using cv::Vec3d;
 LaplacianPyramid::LaplacianPyramid(int rows, int cols, int num_levels)
     : LaplacianPyramid(rows, cols, 1, num_levels) {}
 
-LaplacianPyramid::LaplacianPyramid(int rows,
-                                   int cols,
-                                   int channels,
-                                   int num_levels)
+LaplacianPyramid::LaplacianPyramid(int rows, int cols, int channels,
+  int num_levels)
     : pyramid_(), subwindow_({0, rows - 1, 0, cols - 1}) {
   pyramid_.reserve(num_levels + 1);
   for (int i = 0; i < num_levels + 1; i++) {
@@ -29,7 +27,7 @@ LaplacianPyramid::LaplacianPyramid(const Mat& image, int num_levels)
                                            0, image.cols - 1}) {}
 
 LaplacianPyramid::LaplacianPyramid(const Mat& image, int num_levels,
-                                   const std::vector<int>& subwindow) 
+                                   const std::vector<int>& subwindow)
     : pyramid_(), subwindow_(subwindow) {
   pyramid_.reserve(num_levels + 1);
 
