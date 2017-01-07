@@ -21,8 +21,9 @@ public:
   // The image is converted to 64bit floating point for calculations.
   GaussianPyramid(const cv::Mat& image, int num_levels);
 
-  // Indicates that this is a subimage. If the start index is odd, this is
-  // necessary to make the higher levels the correct size.
+  // Assume that this is a subimage.
+  // If the start index is odd,
+  // this is necessary to make the higher levels the correct size.
   GaussianPyramid(const cv::Mat& image, int num_levels,
                   const std::vector<int>& subwindow);
 
@@ -60,7 +61,7 @@ private:
 
   // i = -2, -1, 0, 1, 2
   // a = 0.3 - Broad blurring Kernel
-  // s = 0.4   Gaussian-like kernel
+  // s = 0.4 - Gaussian-like kernel
   // a = 0.5 - Triangle
   // a = 0.6 - Trimodal (Negative lobes)
   static double WeightingFunction(int i, double a);
@@ -107,11 +108,11 @@ void GaussianPyramid::PopulateTopLevel(int row_offset, int col_offset) {
 }
 
 template<typename T>
-void GaussianPyramid::Expand(const cv::Mat& input,
-                             int row_offset,
-                             int col_offset,
-                             cv::Mat& output) {
-  cv::Mat upsamp = cv::Mat::zeros(output.rows, output.cols, input.type());
+void GaussianPyramid::Expand(const cv::Mat& input, int row_offset,
+  int col_offset, cv::Mat& output)
+{
+  cv::Mat upsamp =
+  cv::Mat::zeros(output.rows, output.cols, input.type());
   cv::Mat norm = cv::Mat::zeros(output.rows, output.cols, CV_64F);
 
   for (int i = row_offset; i < output.rows; i += 2) {
