@@ -140,7 +140,7 @@ int main(int argc, char** argv) {
     return 1;
   }
 
-  cv::Mat input = cv::imread(argv[1]);
+  cv::Mat input = cv::imread(argv[1], cv::IMREAD_UNCHANGED);
   if (input.data == NULL) {
     cerr << "Could not read input image." << endl;
     return 1;
