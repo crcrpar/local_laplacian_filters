@@ -14,7 +14,7 @@
 #include <iostream>
 
 class GaussianPyramid {
- public:
+public:
   // Construct a Gaussian pyramid of the given image.
   // The number of levels does not count the base(given image).
   // So, the pyramid will end up having num_levels + 1 levels.
@@ -29,32 +29,32 @@ class GaussianPyramid {
   // Move constructor for having STL containers of GaussianPyramids.
   GaussianPyramid(GaussianPyramid&& other);
 
-  // No copying or assigning.
+  // No COPYINH or ASSIGNING.
   GaussianPyramid(const GaussianPyramid&) = delete;
   GaussianPyramid& operator=(const GaussianPyramid&) = delete;
 
+  // Indexing
   const cv::Mat& operator[](int level) const { return pyramid_[level]; }
 
-  // Expand the given level a set number of times. The argument times must be
-  // less than or equal to level, since the pyramid is used to determine the
-  // size of the output. Having level equal to times will upsample the image to
+  // Expand the given level a set number of times.
+  // The argument times must be less than or equal to level,
+  // since the pyramid is used to determine the size of the output.
+  // Having level equal to times will upsample the image to
   // the initial pixel dimensions.
   cv::Mat Expand(int level, int times) const;
 
   template<typename T>
-  static void Expand(const cv::Mat& input,
-                     int row_offset,
-                     int col_offset,
-                     cv::Mat& output);
+  static void Expand(const cv::Mat& input, int row_offset,
+    int col_offset, cv::Mat& output);
 
   // Output operator, prints level sizes.
   friend std::ostream &operator<<(std::ostream &output,
-                                  const GaussianPyramid& pyramid);
+    const GaussianPyramid& pyramid);
 
   static void GetLevelSize(const std::vector<int> base_subwindow,
-                           int level,
-                           std::vector<int>* subwindow);
- private:
+    int level, std::vector<int>* subwindow);
+
+private:
   template<typename T>
   void PopulateTopLevel(int row_offset, int col_offset);
 
@@ -69,7 +69,7 @@ class GaussianPyramid {
 
   constexpr static const double kA = 0.4;
 
- private:
+private:
   std::vector<cv::Mat> pyramid_;
   std::vector<int> subwindow_;
 };
