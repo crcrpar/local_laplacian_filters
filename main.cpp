@@ -76,8 +76,8 @@ cv::Mat LocalLaplacianFilter(const cv::Mat& input,
 
   GaussianPyramid gauss_input(input, num_levels);
 
-  // Construct the unfilled Laplacian pyramid of the output. Copy the residual
-  // over from the top of the Gaussian pyramid.
+  // Construct the unfilled Laplacian pyramid of the output.
+  // Copy the residual over from the top of the Gaussian pyramid.
   LaplacianPyramid output(kRows, kCols, input.channels(), num_levels);
   gauss_input[num_levels].copyTo(output[num_levels]);
 
