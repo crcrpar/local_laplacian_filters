@@ -11,6 +11,30 @@
 
 using namespace std;
 
+// get extension from full-path
+inline string GetExtension(const string &path) {
+  string ext;
+  size_t pos1 = path.rfind('.');
+  if(pos1 != string::npos){
+    ext = path.substr(pos1+1, path.size()-pos1);
+    string::iterator itr = ext.begin();
+    while(itr != ext.end()){
+        *itr = tolower(*itr);
+        itr++;
+    }
+    itr = ext.end()-1;
+    while(itr != ext.begin()){
+      if(*itr == 0 || *itr == 32){
+          ext.erase(itr--);
+      }
+      else{
+          itr--;
+      }
+    }
+  }
+  return ext;
+}
+
 // calculate :alpha: and :beta:
 void calcParams(cv::Mat image, double *alpha, double *beta) {
   double min_, max_;
@@ -125,7 +149,10 @@ int main(int argc, char** argv) {
     return 1;
   }
 
-  cv::Mat input = cv::imread(argv[1], cv::IMREAD_UNCHANGED);
+  string filename = argv[1], ext;
+  ext = GetExtension(filename);
+  cout << "file type is " << ext << endl;
+  cv::Mat input = cv::imread(filename, cv::IMREAD_UNCHANGED);
   if (input.data == NULL) {
     cerr << "Could not read input image." << endl;
     return 1;
