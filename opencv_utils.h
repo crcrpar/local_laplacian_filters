@@ -45,7 +45,7 @@ cv::Mat FFTShift(const cv::Mat& input);
 
 std::string GetMatDataType(const cv::Mat& mat);
 
-// Gets a 1D profile of the 2D image. A profile  starts at the center and
+// Gets a 1D profile of the 2D image. A profile starts at the center and
 // extends to the extent of the inscribed circle of the frame. There will be
 // N/2 samples in the profile, where N is the smaller dimension of the image.
 //
@@ -54,6 +54,6 @@ std::string GetMatDataType(const cv::Mat& mat);
 //  theta - Angle of the profile, CCW from +x axis
 //  output - Output: the profile.
 void GetRadialProfile(const cv::Mat& input, double theta,
-                      std::vector<double>* output);
+  std::vector<double>* output);
 
 #endif  // OPENCV_UTILS_H
