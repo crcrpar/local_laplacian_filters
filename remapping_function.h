@@ -8,7 +8,7 @@
 #include <cmath>
 
 class RemappingFunction {
- public:
+public:
   RemappingFunction(double alpha, double beta);
   ~RemappingFunction();
 
@@ -18,26 +18,22 @@ class RemappingFunction {
   double beta() const { return beta_; }
   void set_beta(double beta) { beta_ = beta; }
 
-  void Evaluate(double value,
-                double reference,
-                double sigma_r,
-                double& output);
-  void Evaluate(const cv::Vec3d& value,
-                const cv::Vec3d& reference,
-                double sigma_r,
-                cv::Vec3d& output);
+  void Evaluate(double value, double reference, double sigma_r,
+    double& output);
+  void Evaluate(const cv::Vec3d& value, const cv::Vec3d& reference,
+    double sigma_r, cv::Vec3d& output);
 
   template<typename T>
   void Evaluate(const cv::Mat& input, cv::Mat& output,
-      const T& reference, double sigma_r);
+    const T& reference, double sigma_r);
 
- private:
+private:
   double DetailRemap(double delta, double sigma_r);
   double EdgeRemap(double delta);
 
   double SmoothStep(double x_min, double x_max, double x);
 
- private:
+private:
   double alpha_, beta_;
 };
 
