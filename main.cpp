@@ -117,7 +117,7 @@ cv::Mat LocalLaplacianFilter(const cv::Mat& input,
 /*******************************main********************************/
 int main(int argc, char** argv) {
   const double kSigmaR = 0.3;
-  const double kAlpha = 1;
+  const double kAlpha = 0.25;
   const double kBeta = 0;
 
   if (argc != 2) {
