@@ -4,16 +4,19 @@
 #include "opencv_utils.h"
 #include <iostream>
 
+// 3 parameters
 cv::Mat ByteScale(const cv::Mat& input, bool verbose) {
   cv::Mat output;
   ByteScale(input, output, (double*)NULL, (double*)NULL, verbose);
   return output;
 }
 
+// 3 parameters
 void ByteScale(const cv::Mat& input, cv::Mat& output, bool verbose) {
   ByteScale(input, output, (double*)NULL, (double*)NULL, verbose);
 }
 
+// 4 parameters
 cv::Mat ByteScale(const cv::Mat& input, double* min,
   double* max, bool verbose) {
   cv::Mat output;
@@ -21,6 +24,7 @@ cv::Mat ByteScale(const cv::Mat& input, double* min,
   return output;
 }
 
+// 4 parameters
 void ByteScale(const cv::Mat& input, cv::Mat& output, double* min,
   double* max, bool verbose) {
   double local_min;
@@ -33,6 +37,7 @@ void ByteScale(const cv::Mat& input, cv::Mat& output, double* min,
   ByteScale(input, output, local_min, local_max, verbose);
 }
 
+// 4 parameters
 cv::Mat ByteScale(const cv::Mat& input, double min,
   double max, bool verbose) {
   cv::Mat output;
