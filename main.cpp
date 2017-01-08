@@ -11,20 +11,6 @@
 
 using namespace std;
 
-// display the data type of input image.
-void showImageInfo(cv::Mat image) {
-  switch (image.depth()) {
-  case CV_8U:  cout << " CV_8U" << endl; break; // 8byte uchar
-  case CV_8S:  cout << " CV_8S" << endl; break; // 8byte char
-  case CV_16U: cout << " CV_16U" << endl; break;// 16byte ushort
-  case CV_16S: cout << " CV_16S" << endl; break;// 16byte short
-  case CV_32S: cout << " CV_32S" << endl; break;// 32byte int
-  case CV_32F: cout << " CV_32F" << endl; break;// 32byte float
-  case CV_64F: cout << " CV_64F" << endl; break;// 64byte double
-  default: cout << " something else" << endl;// ありえない
-  }
-}
-
 // calculate :alpha: and :beta:
 void calcParams(cv::Mat image, double *alpha, double *beta) {
   double min_, max_;
@@ -53,12 +39,12 @@ void OutputBinaryImage(const std::string& filename, cv::Mat image) {
 // Perform Local Laplacian filtering on the given image.
 //
 // Arguments:
-//  input    The input image. Can be any type, but will be converted to double
-//           for computation.
+//  input    The input image. Can be any type,
+//           but will be converted to double for computation.
 //  alpha    Exponent for the detail remapping function. (< 1 for detail
 //           enhancement, > 1 for detail suppression)
-//  beta     Slope for edge remapping function (< 1 for tone mapping, > 1 for
-//           inverse tone mapping)
+//  beta     Slope for edge remapping function
+//           (< 1 for tone mapping, > 1 for　inverse tone mapping)
 //  sigma_r  Edge threshold (in image range space).
 template<typename T>
 cv::Mat LocalLaplacianFilter(const cv::Mat& input,
@@ -66,7 +52,8 @@ cv::Mat LocalLaplacianFilter(const cv::Mat& input,
 {
   RemappingFunction r(alpha, beta);
 
-  int num_levels = LaplacianPyramid::GetLevelCount(input.rows, input.cols, 30);
+  int num_levels =
+  LaplacianPyramid::GetLevelCount(input.rows, input.cols, 30);
   cout << "Number of levels: " << num_levels << endl;
 
   const int kRows = input.rows;
@@ -105,18 +92,18 @@ cv::Mat LocalLaplacianFilter(const cv::Mat& input,
         cv::Mat remapped;
         r.Evaluate<T>(r0, remapped, gauss_input[l].at<T>(y, x), sigma_r);
 
-        // Construct the Laplacian pyramid for the remapped region and copy the
-        // coefficient over to the ouptut Laplacian pyramid.
+        // Construct the Laplacian pyramid for the remapped region and
+        // copy the coefficient over to the ouptut Laplacian pyramid.
         LaplacianPyramid tmp_pyr(remapped, l + 1,
             {row_range.start, row_range.end - 1,
              col_range.start, col_range.end - 1});
-        output.at<T>(l, y, x) = tmp_pyr.at<T>(l, full_res_roi_y >> l,
-                                                 full_res_roi_x >> l);
+        output.at<T>(l, y, x) = tmp_pyr.at<T>(l,
+          full_res_roi_y >> l, full_res_roi_x >> l);
       }
       cout << "Level " << (l+1) << " (" << output[l].rows << " x "
-           << output[l].cols << "), footprint: " << subregion_size << "x"
-           << subregion_size << " ... " << round(100.0 * y / output[l].rows)
-           << "%\r";
+      << output[l].cols << "), footprint: " << subregion_size
+      << "x" << subregion_size << " ... "
+      << round(100.0 * y / output[l].rows) << "%\r";
       cout.flush();
     }
     stringstream ss;
@@ -127,7 +114,7 @@ cv::Mat LocalLaplacianFilter(const cv::Mat& input,
 
   return output.Reconstruct();
 }
-
+/*******************************main********************************/
 int main(int argc, char** argv) {
   const double kSigmaR = 0.3;
   const double kAlpha = 1;
@@ -144,7 +131,8 @@ int main(int argc, char** argv) {
     return 1;
   }
   imwrite("original.png", input);
-
+  // check whether the data type of `input` is not changed.
+  strig dtype = GetMatDataType(input);
   input.convertTo(input, CV_64F, 1 / 255.0);
 
   cout << "Input image: " << argv[1] << " Size: " << input.cols << " x "
