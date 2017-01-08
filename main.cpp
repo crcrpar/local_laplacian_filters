@@ -5,7 +5,6 @@
 #include "laplacian_pyramid.h"
 #include "opencv_utils.h"
 #include "remapping_function.h"
-
 #include <iostream>
 #include <sstream>
 
@@ -26,12 +25,8 @@ inline string GetExtension(const string &path) {
     }
     itr = ext.end()-1;
     while(itr != ext.begin()){
-      if(*itr == 0 || *itr == 32){
-          ext.erase(itr--);
-      }
-      else{
-          itr--;
-      }
+      if(*itr == 0 || *itr == 32) ext.erase(itr--);
+      else itr--;
     }
   }
   return ext;
@@ -186,6 +181,7 @@ int main(int argc, char** argv) {
     cerr << "Could not read input image." << endl;
     return 1;
   }
+  showMinMax(input);
   if (ext == "hdr") {
     cv::Mat logarithm;
     cv::log(input, logarithm);
