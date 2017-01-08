@@ -11,20 +11,6 @@
 
 using namespace std;
 
-// display the data type of input image.
-void showImageInfo(cv::Mat image) {
-  switch (image.depth()) {
-  case CV_8U:  cout << " CV_8U" << endl; break; // 8byte uchar
-  case CV_8S:  cout << " CV_8S" << endl; break; // 8byte char
-  case CV_16U: cout << " CV_16U" << endl; break;// 16byte ushort
-  case CV_16S: cout << " CV_16S" << endl; break;// 16byte short
-  case CV_32S: cout << " CV_32S" << endl; break;// 32byte int
-  case CV_32F: cout << " CV_32F" << endl; break;// 32byte float
-  case CV_64F: cout << " CV_64F" << endl; break;// 64byte double
-  default: cout << " something else" << endl;// ありえない
-  }
-}
-
 // calculate :alpha: and :beta:
 void calcParams(cv::Mat image, double *alpha, double *beta) {
   double min_, max_;
