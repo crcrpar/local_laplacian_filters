@@ -55,8 +55,7 @@ void ByteScale(const cv::Mat& input, cv::Mat& output,
 }
 
 void LogScale(const cv::Mat& input, cv::Mat& output) {
-  // :log: below function is not defined anywhere.
-  // TODO: define :log: function
+  // log func: http://docs.opencv.org/2.4/modules/core/doc/operations_on_arrays.html#log
   log(input + 1, output);
   ByteScale(output, output);
 }
