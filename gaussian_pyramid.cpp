@@ -25,9 +25,9 @@ GaussianPyramid::GaussianPyramid(const Mat& image, int num_levels,
   // This test verifies that the image is large enough to support the requested
   // number of levels.
   if (image.cols >> num_levels == 0 || image.rows >> num_levels == 0) {
-    cerr << "Warning: Too many levels requested. Image size " 
-         << image.cols << " x " << image.rows << " and  " << num_levels 
-         << " levels wer requested." << endl;
+    cerr << "Warning: Too many levels were requested. Image size "
+         << image.cols << " x " << image.rows << " and  " << num_levels
+         << " levels were requested." << endl;
   }
 
   for (int l = 0; l < num_levels; l++) {
