@@ -92,18 +92,18 @@ cv::Mat LocalLaplacianFilter(const cv::Mat& input,
         cv::Mat remapped;
         r.Evaluate<T>(r0, remapped, gauss_input[l].at<T>(y, x), sigma_r);
 
-        // Construct the Laplacian pyramid for the remapped region and copy the
-        // coefficient over to the ouptut Laplacian pyramid.
+        // Construct the Laplacian pyramid for the remapped region and
+        // copy the coefficient over to the ouptut Laplacian pyramid.
         LaplacianPyramid tmp_pyr(remapped, l + 1,
             {row_range.start, row_range.end - 1,
              col_range.start, col_range.end - 1});
-        output.at<T>(l, y, x) = tmp_pyr.at<T>(l, full_res_roi_y >> l,
-                                                 full_res_roi_x >> l);
+        output.at<T>(l, y, x) = tmp_pyr.at<T>(l,
+          full_res_roi_y >> l, full_res_roi_x >> l);
       }
       cout << "Level " << (l+1) << " (" << output[l].rows << " x "
-           << output[l].cols << "), footprint: " << subregion_size << "x"
-           << subregion_size << " ... " << round(100.0 * y / output[l].rows)
-           << "%\r";
+      << output[l].cols << "), footprint: " << subregion_size
+      << "x" << subregion_size << " ... "
+      << round(100.0 * y / output[l].rows) << "%\r";
       cout.flush();
     }
     stringstream ss;
@@ -114,7 +114,7 @@ cv::Mat LocalLaplacianFilter(const cv::Mat& input,
 
   return output.Reconstruct();
 }
-
+/*******************************main********************************/
 int main(int argc, char** argv) {
   const double kSigmaR = 0.3;
   const double kAlpha = 1;
