@@ -55,7 +55,7 @@ void ByteScale(const cv::Mat& input, cv::Mat& output,
 }
 
 void LogScale(const cv::Mat& input, cv::Mat& output) {
-  // log func: http://docs.opencv.org/2.4/modules/core/doc/operations_on_arrays.html#log
+  // log func: http://docs.opencv.org/3.1.0/d2/de8/group__core__array.html#ga937ecdce4679a77168730830a955bea7
   log(input + 1, output);
   ByteScale(output, output);
 }
