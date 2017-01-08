@@ -35,6 +35,33 @@ inline string GetExtension(const string &path) {
   return ext;
 }
 
+// get file name from full-path
+inline string GetFileName(const string &path) {
+  size_t pos1;
+  pos1 = path.rfind('\\');
+  if(pos1 != string::npos){
+      return path.substr(pos1+1, path.size()-pos1-1);
+  }
+  pos1 = path.rfind('/');
+  if(pos1 != string::npos){
+      return path.substr(pos1+1, path.size()-pos1-1);
+  }
+  return path;
+}
+
+// get minimum and maximum value of image.
+inline void showMinMax(cv::Mat image) {
+  double _min, _max;
+  cv::minMaxIdx(image, &_min, &_max);
+  cout << "# min: " << _min << ", max: " << _max << endl;
+}
+
+// display data type of image
+inline void showType(cv::Mat image) {
+  string dtype = GetMatDataType(image);
+  cout << "# data type: " << dtype << endl;
+}
+
 // calculate :alpha: and :beta:
 void calcParams(cv::Mat image, double *alpha, double *beta) {
   double min_, max_;
@@ -149,21 +176,26 @@ int main(int argc, char** argv) {
     return 1;
   }
 
-  string filename = argv[1], ext;
-  ext = GetExtension(filename);
-  cout << "file type is " << ext << endl;
+  string filename = argv[1];
+  string ext = GetExtension(filename);
   cv::Mat input = cv::imread(filename, cv::IMREAD_UNCHANGED);
   if (input.data == NULL) {
     cerr << "Could not read input image." << endl;
     return 1;
   }
+  if (ext == "hdr") {
+    cv::Mat logarithm;
+    cv::log(input, logarithm);
+    showMinMax(logarithm);
+  }
   imwrite("original.png", input);
   // check whether the data type of `input` is not changed.
-  string dtype = GetMatDataType(input);
+  showType(input);
   input.convertTo(input, CV_64F, 1 / 255.0);
 
-  cout << "Input image: " << argv[1] << " Size: " << input.cols << " x "
-       << input.rows << " Channels: " << input.channels() << endl;
+  cout << "# Input image: " << GetFileName(filename) << endl
+  << "# Size: " << input.cols << " x " << input.rows << endl
+  << "# Channels: " << input.channels() << endl;
 
   cv::Mat output;
   if (input.channels() == 1) {
