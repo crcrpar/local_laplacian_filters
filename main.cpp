@@ -39,12 +39,12 @@ void OutputBinaryImage(const std::string& filename, cv::Mat image) {
 // Perform Local Laplacian filtering on the given image.
 //
 // Arguments:
-//  input    The input image. Can be any type, but will be converted to double
-//           for computation.
+//  input    The input image. Can be any type,
+//           but will be converted to double for computation.
 //  alpha    Exponent for the detail remapping function. (< 1 for detail
 //           enhancement, > 1 for detail suppression)
-//  beta     Slope for edge remapping function (< 1 for tone mapping, > 1 for
-//           inverse tone mapping)
+//  beta     Slope for edge remapping function
+//           (< 1 for tone mapping, > 1 for　inverse tone mapping)
 //  sigma_r  Edge threshold (in image range space).
 template<typename T>
 cv::Mat LocalLaplacianFilter(const cv::Mat& input,
