@@ -16,7 +16,7 @@ void ByteScale(const cv::Mat& input, cv::Mat& output, bool verbose) {
   ByteScale(input, output, (double*)NULL, (double*)NULL, verbose);
 }
 
-// 4 parameters
+// 4 parameters pointer
 cv::Mat ByteScale(const cv::Mat& input, double* min,
   double* max, bool verbose) {
   cv::Mat output;
@@ -24,7 +24,7 @@ cv::Mat ByteScale(const cv::Mat& input, double* min,
   return output;
 }
 
-// 4 parameters
+// 4 parameters pointer
 void ByteScale(const cv::Mat& input, cv::Mat& output, double* min,
   double* max, bool verbose) {
   double local_min;
@@ -45,6 +45,7 @@ cv::Mat ByteScale(const cv::Mat& input, double min,
   return output;
 }
 
+// 4 parameters, main void ByteScale function
 void ByteScale(const cv::Mat& input, cv::Mat& output,
    double min, double max, bool verbose) {
   cv::convertScaleAbs(input - min, output, 255 / (max - min));
@@ -54,6 +55,8 @@ void ByteScale(const cv::Mat& input, cv::Mat& output,
 }
 
 void LogScale(const cv::Mat& input, cv::Mat& output) {
+  // :log: below function is not defined anywhere.
+  // TODO: define :log: function
   log(input + 1, output);
   ByteScale(output, output);
 }
