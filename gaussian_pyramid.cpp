@@ -25,12 +25,13 @@ GaussianPyramid::GaussianPyramid(const Mat& image, int num_levels,
   // This test verifies that the image is large enough to support the requested
   // number of levels.
   if (image.cols >> num_levels == 0 || image.rows >> num_levels == 0) {
-    cerr << "Warning: Too many levels requested. Image size " 
-         << image.cols << " x " << image.rows << " and  " << num_levels 
-         << " levels wer requested." << endl;
+    cerr << "Warning: Too many levels requested. Image size "
+         << image.cols << " x " << image.rows << " and  " << num_levels
+         << " levels were requested." << endl;
   }
 
   for (int l = 0; l < num_levels; l++) {
+    // set previous as the last element of vector :pyramid_:
     const Mat& previous = pyramid_.back();
 
     // Get the subwindows of the previous level and the current one.
@@ -41,14 +42,17 @@ GaussianPyramid::GaussianPyramid(const Mat& image, int num_levels,
     const int kRows = current_subwindow[1] - current_subwindow[0] + 1;
     const int kCols = current_subwindow[3] - current_subwindow[2] + 1;
 
-    // If the subwindow starts on even indices, then (0,0) of the new level is
-    // centered on (0,0) of the previous level. Otherwise, it's centered on
-    // (1,1).
+    // If the subwindow starts on even indices,
+    // then (0,0) of the new level is centered on (0,0) of the previous level.
+    // Otherwise, it's centered on (1,1).
     int row_offset = ((prev_subwindow[0] % 2) == 0) ? 0 : 1;
     int col_offset = ((prev_subwindow[2] % 2) == 0) ? 0 : 1;
 
     // Push a new level onto the top of the pyramid.
     pyramid_.emplace_back(kRows, kCols, previous.type());
+    // method :emplace_back: is equivalent to :push_back:,
+    // however, this method is more memory-efficient
+    // see http://kyasu.sakura.ne.jp/?type=single&id=20141124033430
     Mat& next = pyramid_.back();
 
     // Populate the next level.
@@ -105,11 +109,10 @@ void GaussianPyramid::GetLevelSize(int level, vector<int>* subwindow) const {
 }
 
 void GaussianPyramid::GetLevelSize(const vector<int> base_subwindow,
-                                   int level,
-                                   vector<int>* subwindow) {
+  int level, vector<int>* subwindow) {
   subwindow->clear();
-  subwindow->insert(begin(*subwindow),
-      begin(base_subwindow), end(base_subwindow));
+  subwindow->insert(begin(*subwindow), begin(base_subwindow),
+  end(base_subwindow));
 
   for (int i = 0; i < level; i++) {
     (*subwindow)[0] = ((*subwindow)[0] >> 1) + (*subwindow)[0] % 2;
