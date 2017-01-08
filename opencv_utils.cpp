@@ -4,33 +4,25 @@
 #include "opencv_utils.h"
 #include <iostream>
 
-cv::Mat ByteScale(const cv::Mat& input,
-                  bool verbose) {
+cv::Mat ByteScale(const cv::Mat& input, bool verbose) {
   cv::Mat output;
   ByteScale(input, output, (double*)NULL, (double*)NULL, verbose);
   return output;
 }
 
-void ByteScale(const cv::Mat& input,
-               cv::Mat& output,
-               bool verbose) {
+void ByteScale(const cv::Mat& input, cv::Mat& output, bool verbose) {
   ByteScale(input, output, (double*)NULL, (double*)NULL, verbose);
 }
 
-cv::Mat ByteScale(const cv::Mat& input,
-                  double* min,
-                  double* max,
-                  bool verbose) {
+cv::Mat ByteScale(const cv::Mat& input, double* min,
+  double* max, bool verbose) {
   cv::Mat output;
   ByteScale(input, output, min, max, verbose);
   return output;
 }
 
-void ByteScale(const cv::Mat& input,
-               cv::Mat& output,
-               double* min,
-               double* max,
-               bool verbose) {
+void ByteScale(const cv::Mat& input, cv::Mat& output, double* min,
+  double* max, bool verbose) {
   double local_min;
   double local_max;
   cv::minMaxIdx(input, &local_min, &local_max);
@@ -41,28 +33,22 @@ void ByteScale(const cv::Mat& input,
   ByteScale(input, output, local_min, local_max, verbose);
 }
 
-cv::Mat ByteScale(const cv::Mat& input,
-                  double min,
-                  double max,
-                  bool verbose) {
+cv::Mat ByteScale(const cv::Mat& input, double min,
+  double max, bool verbose) {
   cv::Mat output;
   ByteScale(input, output, min, max, verbose);
   return output;
 }
 
-void ByteScale(const cv::Mat& input,
-               cv::Mat& output,
-               double min,
-               double max,
-               bool verbose) {
+void ByteScale(const cv::Mat& input, cv::Mat& output,
+   double min, double max, bool verbose) {
   cv::convertScaleAbs(input - min, output, 255 / (max - min));
   if (verbose) {
     std::cout << "ByteScale: min = " << min << ", max = " << max << std::endl;
   }
 }
 
-void LogScale(const cv::Mat& input,
-              cv::Mat& output) {
+void LogScale(const cv::Mat& input, cv::Mat& output) {
   log(input + 1, output);
   ByteScale(output, output);
 }
@@ -134,15 +120,15 @@ std::string GetMatDataType(const cv::Mat& mat) {
 
   // find channel
   int channel = (number/8) + 1;
-  
+
   std::stringstream type;
   type << "CV_" << imgTypeString << "C" << channel;
- 
+
   return type.str();
 }
 
 void GetRadialProfile(const cv::Mat& input, double theta,
-                      std::vector<double>* output) {
+   std::vector<double>* output) {
   if (!output) return;
   output->clear();
 
