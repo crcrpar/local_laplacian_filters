@@ -67,8 +67,7 @@ cv::Mat LogScale(const cv::Mat& input) {
 }
 
 cv::Mat GammaScale(const cv::Mat& input, double gamma) {
-  double min;
-  double max;
+  double min, max;
   cv::minMaxIdx(input, &min, &max);
 
   cv::Mat scaled;
@@ -89,7 +88,9 @@ cv::Mat magnitude(const cv::Mat& input) {
 void magnitude(const cv::Mat& input, cv::Mat& output) {
   std::vector<cv::Mat> input_planes;
   cv::split(input, input_planes);
+  // see, http://docs.opencv.org/3.1.0/d2/de8/group__core__array.html#ga0547c7fed86152d7e9d0096029c8518a
   cv::magnitude(input_planes.at(0), input_planes.at(1), output);
+  // see, http://docs.opencv.org/3.1.0/d2/de8/group__core__array.html#ga6d3b097586bca4409873d64a90fe64c3
 }
 
 std::string GetMatDataType(const cv::Mat& mat) {
@@ -100,6 +101,7 @@ std::string GetMatDataType(const cv::Mat& mat) {
   std::string imgTypeString;
 
   switch (imgTypeInt) {
+    // define imgTypeString here.
     case 0:
       imgTypeString = "8U";
       break;
@@ -124,13 +126,10 @@ std::string GetMatDataType(const cv::Mat& mat) {
     default:
       break;
   }
-
   // find channel
   int channel = (number/8) + 1;
-
   std::stringstream type;
   type << "CV_" << imgTypeString << "C" << channel;
-
   return type.str();
 }
 
@@ -150,7 +149,7 @@ void GetRadialProfile(const cv::Mat& input, double theta,
   double dy = sin(theta);
 
   output->reserve(profile_size);
-  for (int i = 0; i < profile_size; i++) {
+  for (int i=0; i<profile_size; i++) {
     double x = center_x + i * dx;
     double y = center_y + i * dy;
 
@@ -162,12 +161,15 @@ void GetRadialProfile(const cv::Mat& input, double theta,
     if (x_lt > 0 && y_lt > 0 && x_gt < cols && y_gt < rows) {
       double alpha_x = x - x_lt;
       double alpha_y = y - y_lt;
-      double inter_y_lt = (1-alpha_y) * input.at<double>(y_lt, x_lt) +
-                          alpha_y * input.at<double>(y_gt, x_lt);
-      double inter_y_gt = (1-alpha_y) * input.at<double>(y_lt, x_gt) +
-                          alpha_y * input.at<double>(y_gt, x_gt);
+
+      double inter_y_lt = (1-alpha_y) * input.at<double>(y_lt, x_lt)
+      + alpha_y * input.at<double>(y_gt, x_lt);
+      double inter_y_gt = (1-alpha_y) * input.at<double>(y_lt, x_gt)
+      + alpha_y * input.at<double>(y_gt, x_gt);
+
       output->push_back((1-alpha_x) * inter_y_lt + alpha_x * inter_y_gt);
-    } else {
+    }
+    else {
       int x_rnd = std::max(std::min((int)round(x), cols - 1), 0);
       int y_rnd = std::max(std::min((int)round(y), rows - 1), 0);
       output->push_back(input.at<double>(y_rnd, x_rnd));
