@@ -36,7 +36,8 @@ LaplacianPyramid::LaplacianPyramid(const Mat& image, int num_levels,
 
   GaussianPyramid gauss_pyramid(input, num_levels, subwindow_);
   for (int i = 0; i < num_levels; i++) {
-    pyramid_.emplace_back(gauss_pyramid[i] - gauss_pyramid.Expand(i + 1, 1));
+    pyramid_.emplace_back(gauss_pyramid[i] -
+      gauss_pyramid.Expand(i + 1, 1));
   }
   pyramid_.emplace_back(gauss_pyramid[num_levels]);
 }

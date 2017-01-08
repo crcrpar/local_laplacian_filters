@@ -19,8 +19,9 @@ class LaplacianPyramid {
   //  rows        The number of rows in the base level.
   //  cols        The number of columns of the base level.
   //  channels    The number of channels in the represented image.
-  //  num_levels  The number of levels of the pyramid (excluding the top, which
-  //              is the residual, or top of the Gaussian pyramid)
+  //  num_levels  The number of levels of the pyramid
+  // (excluding the top, which is the residual,
+  // or top of the Gaussian pyramid)
   LaplacianPyramid(int rows, int cols, int num_levels);
   LaplacianPyramid(int rows, int cols, int channels, int num_levels);
 
@@ -29,13 +30,14 @@ class LaplacianPyramid {
   // Arguments:
   //  image      The input image. Can be any data type, but will be converted
   //             to double. Can be either 1 or 3 channels.
-  //  num_levels The number of levels for the pyramid (excluding the top, which
-  //             is the residual, or top of the Gaussian pyramid)
+  //  num_levels The number of levels for the pyramid
+  //             (excluding the top, which is the residual,
+  //             or top of the Gaussian pyramid)
   //  subwindow  If this is a subimage [start_row, end_row, start_col, end_col]
   //             Both ends are inclusive.
   LaplacianPyramid(const cv::Mat& image, int num_levels);
   LaplacianPyramid(const cv::Mat& image, int num_levels,
-                   const std::vector<int>& subwindow);
+    const std::vector<int>& subwindow);
 
   // Move constructor if you want STL containers using emplace_back().
   LaplacianPyramid(LaplacianPyramid&& other);
@@ -44,7 +46,7 @@ class LaplacianPyramid {
   LaplacianPyramid(const LaplacianPyramid&) = delete;
   LaplacianPyramid& operator=(const LaplacianPyramid&) = delete;
 
-  // Get a level of the pyramid.
+  // Get a level of the pyramid. (indexing)
   const cv::Mat& operator[](int level) const { return pyramid_[level]; }
   cv::Mat& operator[](int level) { return pyramid_[level]; }
 
@@ -62,8 +64,7 @@ class LaplacianPyramid {
   static int GetLevelCount(int rows, int cols, int desired_base_size);
 
   // Output operator. Outputs level sizes.
-  friend std::ostream &operator<<(std::ostream &output,
-                                  const LaplacianPyramid& pyramid);
+  friend std::ostream &operator<<(std::ostream &output, const LaplacianPyramid& pyramid);
 
  private:
   std::vector<cv::Mat> pyramid_;
