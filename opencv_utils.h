@@ -20,6 +20,7 @@ void ByteScale(const cv::Mat& input, cv::Mat& output, double* min,
 cv::Mat ByteScale(const cv::Mat& input, double min,
   double max, bool verbose = false);
 
+// this ByTeScale function is main. Above 2 ByteScale are sub-function.
 void ByteScale(const cv::Mat& input, cv::Mat& output, double min,
   double max, bool verbose = false);
 
