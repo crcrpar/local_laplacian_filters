@@ -9,6 +9,8 @@
 #include <iostream>
 #include <sstream>
 
+#define OPENCV_VERSION(a,b,c) (((a) << 16) + ((b) << 8) + (c))
+
 using namespace std;
 
 // get extension from full-path
@@ -167,6 +169,7 @@ cv::Mat LocalLaplacianFilter(const cv::Mat& input,
 }
 /*******************************main********************************/
 int main(int argc, char** argv) {
+  cout << "# version: " << CV_VERSION << endl;
   const double kSigmaR = 0.3;
   const double kAlpha = 0.25;
   const double kBeta = 0;
