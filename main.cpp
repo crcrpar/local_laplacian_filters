@@ -145,7 +145,8 @@ int main(int argc, char** argv) {
     return 1;
   }
   imwrite("original.png", input);
-
+  // check whether the data type of `input` is not changed.
+  strig dtype = GetMatDataType(input);
   input.convertTo(input, CV_64F, 1 / 255.0);
 
   cout << "Input image: " << argv[1] << " Size: " << input.cols << " x "
