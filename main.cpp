@@ -61,8 +61,8 @@ void OutputBinaryImage(const std::string& filename, cv::Mat image) {
 //           inverse tone mapping)
 //  sigma_r  Edge threshold (in image range space).
 template<typename T>
-cv::Mat LocalLaplacianFilter(const cv::Mat& input, double alpha,
-  double beta, double sigma_r)
+cv::Mat LocalLaplacianFilter(const cv::Mat& input,
+  double alpha, double beta, double sigma_r)
 {
   RemappingFunction r(alpha, beta);
 

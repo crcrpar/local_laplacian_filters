@@ -16,14 +16,14 @@ GaussianPyramid::GaussianPyramid(GaussianPyramid&& other)
     : pyramid_(move(other.pyramid_)) {}
 
 GaussianPyramid::GaussianPyramid(const Mat& image, int num_levels,
-                                 const vector<int>& subwindow)
+  const vector<int>& subwindow)
     : pyramid_(), subwindow_(subwindow) {
   pyramid_.reserve(num_levels + 1);
   pyramid_.emplace_back();
   image.convertTo(pyramid_.back(), CV_64F);
 
-  // This test verifies that the image is large enough to support the requested
-  // number of levels.
+  // This test verifies that the image is large
+  // enough to support the requested number of levels.
   if (image.cols >> num_levels == 0 || image.rows >> num_levels == 0) {
     cerr << "Warning: Too many levels requested. Image size "
          << image.cols << " x " << image.rows << " and  " << num_levels
