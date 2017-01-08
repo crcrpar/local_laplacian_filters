@@ -182,11 +182,6 @@ int main(int argc, char** argv) {
     return 1;
   }
   showMinMax(input);
-  if (ext == "hdr") {
-    cv::Mat logarithm;
-    cv::log(input, logarithm);
-    showMinMax(logarithm);
-  }
   imwrite("original.png", input);
   // check whether the data type of `input` is not changed.
   showType(input);
