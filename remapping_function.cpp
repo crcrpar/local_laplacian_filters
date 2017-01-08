@@ -19,24 +19,24 @@ double RemappingFunction::SmoothStep(double x_min, double x_max, double x) {
   return pow(y, 2) * pow(y-2, 2);
 }
 
-void RemappingFunction::Evaluate(double value,
-                                 double reference,
-                                 double sigma_r,
-                                 double& output) {
+void RemappingFunction::Evaluate(double value, double reference,
+  double sigma_r, double& output) {
   double delta = std::abs(value - reference);
   int sign = value < reference ? -1 : 1;
 
   if (delta < sigma_r) {
-    output = reference + sign * sigma_r * DetailRemap(delta, sigma_r);
-  } else {
-    output = reference + sign * (EdgeRemap(delta - sigma_r) + sigma_r);
+    output = reference +
+    sign * sigma_r * DetailRemap(delta, sigma_r);
+  }
+  else {
+    output = reference +
+    sign * (EdgeRemap(delta - sigma_r) + sigma_r);
   }
 }
 
 void RemappingFunction::Evaluate(const cv::Vec3d& value,
-                                 const cv::Vec3d& reference,
-                                 double sigma_r,
-                                 cv::Vec3d& output) {
+  const cv::Vec3d& reference, double sigma_r,
+  cv::Vec3d& output) {
   cv::Vec3d delta = value - reference;
   double mag = cv::norm(delta);
   if (mag > 1e-10) delta /= mag;

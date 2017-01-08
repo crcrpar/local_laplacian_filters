@@ -42,8 +42,8 @@ inline double RemappingFunction::DetailRemap(double delta, double sigma_r) {
   double polynomial = pow(fraction, alpha_);
   if (alpha_ < 1) {
     const double kNoiseLevel = 0.01;
-    double blend = SmoothStep(kNoiseLevel,
-        2 * kNoiseLevel, fraction * sigma_r);
+    double blend = SmoothStep(kNoiseLevel, 2 * kNoiseLevel,
+       fraction * sigma_r);
     polynomial = blend * polynomial + (1 - blend) * fraction;
   }
   return polynomial;
@@ -55,7 +55,7 @@ inline double RemappingFunction::EdgeRemap(double delta) {
 
 template<typename T>
 void RemappingFunction::Evaluate(const cv::Mat& input, cv::Mat& output,
-      const T& reference, double sigma_r) {
+  const T& reference, double sigma_r) {
   output.create(input.rows, input.cols, input.type());
   for (int i = 0; i < input.rows; i++) {
     for (int j = 0; j < input.cols; j++) {
