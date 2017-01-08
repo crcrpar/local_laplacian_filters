@@ -61,12 +61,13 @@ void OutputBinaryImage(const std::string& filename, cv::Mat image) {
 //           inverse tone mapping)
 //  sigma_r  Edge threshold (in image range space).
 template<typename T>
-cv::Mat LocalLaplacianFilter(const cv::Mat& input, double alpha,
-  double beta, double sigma_r)
+cv::Mat LocalLaplacianFilter(const cv::Mat& input,
+  double alpha, double beta, double sigma_r)
 {
   RemappingFunction r(alpha, beta);
 
-  int num_levels = LaplacianPyramid::GetLevelCount(input.rows, input.cols, 30);
+  int num_levels =
+  LaplacianPyramid::GetLevelCount(input.rows, input.cols, 30);
   cout << "Number of levels: " << num_levels << endl;
 
   const int kRows = input.rows;
