@@ -34,7 +34,7 @@ endif()
 
 include_directories(${LLF_SOURCE_DIR})
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -std=c++11 -I/usr/local/opt/opencv3/include/ -L/usr/local/opt/opencv3/lib/ -lopencv_imgproc -lopencv_imgproc -lopencv_imgcodecs -lopencv_highgui -lopencv_core -lopencv_ml")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS})
 if (cmake_build_type_tolower STREQUAL "release")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
 endif()
