@@ -118,6 +118,7 @@ cv::Mat LocalLaplacianFilter(const cv::Mat& input,
   for (int l = 0; l < num_levels; l++) {
     int subregion_size = 3 * ((1 << (l + 2)) - 1);
     int subregion_r = subregion_size / 2;
+    // ref: paper section 4, $K = 3(2^{l_0+2}-1)$
 
     for (int y = 0; y < output[l].rows; y++) {
       // Calculate the y-bounds of the region in the full-res image.
