@@ -5,11 +5,59 @@
 #include "laplacian_pyramid.h"
 #include "opencv_utils.h"
 #include "remapping_function.h"
-
 #include <iostream>
 #include <sstream>
 
+#define OPENCV_VERSION(a,b,c) (((a) << 16) + ((b) << 8) + (c))
+
 using namespace std;
+
+// get extension from full-path
+inline string GetExtension(const string &path) {
+  string ext;
+  size_t pos1 = path.rfind('.');
+  if(pos1 != string::npos){
+    ext = path.substr(pos1+1, path.size()-pos1);
+    string::iterator itr = ext.begin();
+    while(itr != ext.end()){
+        *itr = tolower(*itr);
+        itr++;
+    }
+    itr = ext.end()-1;
+    while(itr != ext.begin()){
+      if(*itr == 0 || *itr == 32) ext.erase(itr--);
+      else itr--;
+    }
+  }
+  return ext;
+}
+
+// get file name from full-path
+inline string GetFileName(const string &path) {
+  size_t pos1;
+  pos1 = path.rfind('\\');
+  if(pos1 != string::npos){
+      return path.substr(pos1+1, path.size()-pos1-1);
+  }
+  pos1 = path.rfind('/');
+  if(pos1 != string::npos){
+      return path.substr(pos1+1, path.size()-pos1-1);
+  }
+  return path;
+}
+
+// get minimum and maximum value of image.
+inline void showMinMax(cv::Mat image) {
+  double _min, _max;
+  cv::minMaxIdx(image, &_min, &_max);
+  cout << "# min: " << _min << ", max: " << _max << endl;
+}
+
+// display data type of image
+inline void showType(cv::Mat image) {
+  string dtype = GetMatDataType(image);
+  cout << "# data type: " << dtype << endl;
+}
 
 // calculate :alpha: and :beta:
 void calcParams(cv::Mat image, double *alpha, double *beta) {
@@ -116,6 +164,7 @@ cv::Mat LocalLaplacianFilter(const cv::Mat& input,
 }
 /*******************************main********************************/
 int main(int argc, char** argv) {
+  cout << "# version: " << CV_VERSION << endl;
   const double kSigmaR = 0.3;
   const double kAlpha = 0.25;
   const double kBeta = 0;
@@ -125,18 +174,22 @@ int main(int argc, char** argv) {
     return 1;
   }
 
-  cv::Mat input = cv::imread(argv[1], cv::IMREAD_UNCHANGED);
+  string filename = argv[1];
+  string ext = GetExtension(filename);
+  cv::Mat input = cv::imread(filename, cv::IMREAD_UNCHANGED);
   if (input.data == NULL) {
     cerr << "Could not read input image." << endl;
     return 1;
   }
+  showMinMax(input);
   imwrite("original.png", input);
   // check whether the data type of `input` is not changed.
-  string dtype = GetMatDataType(input);
+  showType(input);
   input.convertTo(input, CV_64F, 1 / 255.0);
 
-  cout << "Input image: " << argv[1] << " Size: " << input.cols << " x "
-       << input.rows << " Channels: " << input.channels() << endl;
+  cout << "# Input image: " << GetFileName(filename) << endl
+  << "# Size: " << input.cols << " x " << input.rows << endl
+  << "# Channels: " << input.channels() << endl;
 
   cv::Mat output;
   if (input.channels() == 1) {
