@@ -9,8 +9,8 @@ using cv::Mat;
 using cv::Vec3d;
 
 GaussianPyramid::GaussianPyramid(const Mat& image, int num_levels)
-    : GaussianPyramid(image, num_levels, {0, image.rows - 1,
-                                          0, image.cols - 1}) {}
+    : GaussianPyramid(image, num_levels,
+      {0, image.rows - 1, 0, image.cols - 1}) {}
 
 GaussianPyramid::GaussianPyramid(GaussianPyramid&& other)
     : pyramid_(move(other.pyramid_)) {}
@@ -83,7 +83,8 @@ Mat GaussianPyramid::Expand(int level, int times) const {
     int col_offset = ((subwindow[2] % 2) == 0) ? 0 : 1;
     if (base.channels() == 1) {
       Expand<double>(base, row_offset, col_offset, expanded);
-    } else {
+    }
+    else {
       Expand<Vec3d>(base, row_offset, col_offset, expanded);
     }
 
