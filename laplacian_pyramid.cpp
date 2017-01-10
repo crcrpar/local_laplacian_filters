@@ -18,16 +18,16 @@ LaplacianPyramid::LaplacianPyramid(int rows, int cols, int channels,
   pyramid_.reserve(num_levels + 1);
   for (int i = 0; i < num_levels + 1; i++) {
     pyramid_.emplace_back(ceil(rows / (double)(1 << i)),
-                          ceil(cols / (double)(1 << i)), CV_64FC(channels));
+    ceil(cols / (double)(1 << i)), CV_64FC(channels));
   }
 }
 
 LaplacianPyramid::LaplacianPyramid(const Mat& image, int num_levels)
-    : LaplacianPyramid(image, num_levels, {0, image.rows - 1,
-                                           0, image.cols - 1}) {}
+    : LaplacianPyramid(image, num_levels,
+      {0, image.rows - 1, 0, image.cols - 1}) {}
 
 LaplacianPyramid::LaplacianPyramid(const Mat& image, int num_levels,
-                                   const std::vector<int>& subwindow)
+  const std::vector<int>& subwindow)
     : pyramid_(), subwindow_(subwindow) {
   pyramid_.reserve(num_levels + 1);
 
@@ -59,7 +59,8 @@ Mat LaplacianPyramid::Reconstruct() const {
 
     if (base.channels() == 1) {
       GaussianPyramid::Expand<double>(base, row_offset, col_offset, expanded);
-    } else if (base.channels() == 3) {
+    }
+    else if (base.channels() == 3) {
       GaussianPyramid::Expand<Vec3d>(base, row_offset, col_offset, expanded);
     }
     base = expanded + pyramid_[i];
