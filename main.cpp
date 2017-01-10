@@ -7,6 +7,7 @@
 #include "remapping_function.h"
 #include <iostream>
 #include <sstream>
+#include <cmath>
 
 #define OPENCV_VERSION(a,b,c) (((a) << 16) + ((b) << 8) + (c))
 
@@ -166,7 +167,7 @@ cv::Mat LocalLaplacianFilter(const cv::Mat& input,
 /*******************************main********************************/
 int main(int argc, char** argv) {
   cout << "# version: " << CV_VERSION << endl;
-  const double kSigmaR = 0.3;
+  const double kSigmaR = log(0.25);
   const double kAlpha = 0.25;
   const double kBeta = 0;
 
