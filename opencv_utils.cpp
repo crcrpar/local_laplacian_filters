@@ -176,3 +176,46 @@ void GetRadialProfile(const cv::Mat& input, double theta,
     }
   }
 }
+
+std::string GetExtension(const std::string &path) {
+  std::string ext;
+  size_t pos1 = path.rfind('.');
+  if (pos1 != std::string::npos) {
+    ext = path.substr(pos1+1, path.size()-pos1);
+    std::string::iterator itr = ext.begin();
+    while(itr != ext.end()) {
+      *itr = tolower(*itr);
+      itr++;
+    }
+    itr = ext.end() - 1;
+    while(itr != ext.begin()) {
+      if(*itr == 0 || *itr == 32) ext.erase(itr--);
+      else itr--;
+    }
+  }
+  return ext;
+}
+
+std::string GetFileName(const std::string &path) {
+  size_t pos1;
+  pos1 = path.rfind('\\');
+  if(pos1 != std::string::npos) {
+    return path.substr(pos1+1, path.size()-pos1-1);
+  }
+  pos1 = path.rfind('/');
+  if(pos1 != std::string::npos) {
+    return path.substr(pos1+1, path.size()-pos1-1);
+  }
+  return path;
+}
+
+void showMinMax(cv::Mat image) {
+  double _min, _max;
+  cv::minMaxIdx(image, &_min, &_max);
+  std::cout << "# min: " << _min << ", max: " << _max << std::endl;
+}
+
+void showType(cv::Mat image) {
+  std::string dtype = GetMatDataType(image);
+  std::cout << "# data type: " << dtype << std::endl;
+}

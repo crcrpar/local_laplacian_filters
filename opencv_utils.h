@@ -56,4 +56,10 @@ std::string GetMatDataType(const cv::Mat& mat);
 void GetRadialProfile(const cv::Mat& input, double theta,
   std::vector<double>* output);
 
+// functions below defined by crcrpar
+std::string GetExtension(const std::string &path);
+std::string GetFileName(const std::string&path);
+void showMinMax(cv::Mat image);
+void showType(cv::Mat image);
+
 #endif  // OPENCV_UTILS_H

@@ -1,5 +1,7 @@
 // File Description
 // Author: Philip Salvaggio
+// Modification: crcrpar
+// so as to tone-manipulation
 
 #include "gaussian_pyramid.h"
 #include "laplacian_pyramid.h"
@@ -13,6 +15,7 @@
 
 using namespace std;
 
+#if 0
 // get extension from full-path
 inline string GetExtension(const string &path) {
   string ext;
@@ -46,7 +49,9 @@ inline string GetFileName(const string &path) {
   }
   return path;
 }
+#endif
 
+#if 0
 // get minimum and maximum value of image.
 inline void showMinMax(cv::Mat image) {
   double _min, _max;
@@ -59,6 +64,7 @@ inline void showType(cv::Mat image) {
   string dtype = GetMatDataType(image);
   cout << "# data type: " << dtype << endl;
 }
+#endif 
 
 // calculate :alpha: and :beta:
 void calcParams(cv::Mat image, double *alpha, double *beta) {
