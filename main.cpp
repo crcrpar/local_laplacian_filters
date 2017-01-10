@@ -10,6 +10,7 @@
 #include <iostream>
 #include <sstream>
 #include <cmath>
+#include <vector>
 
 #define OPENCV_VERSION(a,b,c) (((a) << 16) + ((b) << 8) + (c))
 
@@ -38,6 +39,29 @@ void OutputBinaryImage(const std::string& filename, cv::Mat image) {
     }
   }
   fclose(f);
+}
+
+//  Tone Mapping: calculate the intensity image and color ratio,
+//                then, perform local laplacian filtering.
+//
+// Arguments
+// input     The input image, only hdr.
+// alpha     The same as local laplacian filter
+// beta      The same as local laplacian filter
+// sigma_r   The same as local laplacian filter
+
+cv::Mat ToneManipulation(const cv::Mat& input, double alpha,
+  double beta, double sigma_r)
+{
+  cv::Mat tmp_img = input.clone(), intensity;
+  vector<cv::Mat> channels;
+  cv::split(tmp_img, channels);
+  double coefficients[] = {1/61.0, 40/61.0, 20/61.0};
+  for (int i=0; i<3; i++) {
+    channels[i] /= coefficients[i];
+  }
+  cv::merge(channels, intensity);
+
 }
 
 // Perform Local Laplacian filtering on the given image.
@@ -144,6 +168,9 @@ int main(int argc, char** argv) {
   // check whether the data type of `input` is not changed.
   showType(input);
   input.convertTo(input, CV_64F, 1 / 255.0);
+
+  // test of ToneManipulation
+  cv::Mat test = ToneManipulation(input, kAlpha, kBeta, kSigmaR);
 
   cout << "# Input image: " << GetFileName(filename) << endl
   << "# Size: " << input.cols << " x " << input.rows << endl
