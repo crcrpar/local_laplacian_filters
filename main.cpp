@@ -177,13 +177,14 @@ int main(int argc, char** argv) {
 
   string filename = argv[1];
   string ext = GetExtension(filename);
+  cout << "# image file type: " << ext << endl;
   cv::Mat input = cv::imread(filename, cv::IMREAD_UNCHANGED);
   if (input.data == NULL) {
     cerr << "Could not read input image." << endl;
     return 1;
   }
-  showMinMax(input);
-  imwrite("original.png", input);
+  showMinMax(input); // show min and max of input image.
+  imwrite("original."+ext, input);
   // check whether the data type of `input` is not changed.
   showType(input);
   input.convertTo(input, CV_64F, 1 / 255.0);
@@ -192,12 +193,15 @@ int main(int argc, char** argv) {
   << "# Size: " << input.cols << " x " << input.rows << endl
   << "# Channels: " << input.channels() << endl;
 
+  // execution of LocalLaplacianFilter
   cv::Mat output;
   if (input.channels() == 1) {
     output = LocalLaplacianFilter<double>(input, kAlpha, kBeta, kSigmaR);
-  } else if (input.channels() == 3) {
+  }
+  else if (input.channels() == 3) {
     output = LocalLaplacianFilter<cv::Vec3d>(input, kAlpha, kBeta, kSigmaR);
-  } else {
+  }
+  else {
     cerr << "Input image must have 1 or 3 channels." << endl;
     return 1;
   }
@@ -205,7 +209,7 @@ int main(int argc, char** argv) {
   output *= 255;
   output.convertTo(output, input.type());
 
-  imwrite("output.png", output);
+  imwrite("output."+ext, output);
 
   return 0;
 }
