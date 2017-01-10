@@ -35,15 +35,16 @@ void RemappingFunction::Evaluate(double value, double reference,
 }
 
 void RemappingFunction::Evaluate(const cv::Vec3d& value,
-  const cv::Vec3d& reference, double sigma_r,
-  cv::Vec3d& output) {
+  const cv::Vec3d& reference, double sigma_r, cv::Vec3d& output)
+{
   cv::Vec3d delta = value - reference;
   double mag = cv::norm(delta);
   if (mag > 1e-10) delta /= mag;
 
   if (mag < sigma_r) {
     output = reference + delta * sigma_r * DetailRemap(mag, sigma_r);
-  } else {
+  }
+  else {
     output = reference + delta * (EdgeRemap(mag - sigma_r) + sigma_r);
   }
 }
