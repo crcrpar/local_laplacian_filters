@@ -15,57 +15,6 @@
 
 using namespace std;
 
-#if 0
-// get extension from full-path
-inline string GetExtension(const string &path) {
-  string ext;
-  size_t pos1 = path.rfind('.');
-  if(pos1 != string::npos){
-    ext = path.substr(pos1+1, path.size()-pos1);
-    string::iterator itr = ext.begin();
-    while(itr != ext.end()){
-        *itr = tolower(*itr);
-        itr++;
-    }
-    itr = ext.end()-1;
-    while(itr != ext.begin()){
-      if(*itr == 0 || *itr == 32) ext.erase(itr--);
-      else itr--;
-    }
-  }
-  return ext;
-}
-
-// get file name from full-path
-inline string GetFileName(const string &path) {
-  size_t pos1;
-  pos1 = path.rfind('\\');
-  if(pos1 != string::npos){
-      return path.substr(pos1+1, path.size()-pos1-1);
-  }
-  pos1 = path.rfind('/');
-  if(pos1 != string::npos){
-      return path.substr(pos1+1, path.size()-pos1-1);
-  }
-  return path;
-}
-#endif
-
-#if 0
-// get minimum and maximum value of image.
-inline void showMinMax(cv::Mat image) {
-  double _min, _max;
-  cv::minMaxIdx(image, &_min, &_max);
-  cout << "# min: " << _min << ", max: " << _max << endl;
-}
-
-// display data type of image
-inline void showType(cv::Mat image) {
-  string dtype = GetMatDataType(image);
-  cout << "# data type: " << dtype << endl;
-}
-#endif 
-
 // calculate :alpha: and :beta:
 void calcParams(cv::Mat image, double *alpha, double *beta) {
   double min_, max_;
