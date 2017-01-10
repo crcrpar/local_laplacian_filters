@@ -12,17 +12,25 @@
 class ToneManipulation : RemappingFunction {
 
 public:
+  ToneManipulation(cv::Mat image, double alpha, double beta);
+
+public:
   void Manipulate(const cv::Vec3d& input, const cv::Vec3d& reference,
    double sigma_r, cv::Vec3d& output);
 
+  void set_image(cv::Mat input) {
+    image_ = input;
+  }
+
 private:
-  void Intensity(cv::Mat& image);
+  cv::Mat Intensity(cv::Mat& image);
   cv::Vec3d ColorRatio(cv::Mat& image);
-  cv::Mat image;
-  cv::Mat intensity_image;
+  cv::Mat image_;
+  cv::Mat intensity_image_;
+  std::vector<double> color_ratio_;
 };
 
-inline void Intensity(cv::Mat& image) {
+inline cv::Mat Intensity(cv::Mat& image) {
   cv::Mat tmp = image.clone();
   std::vector<cv::Mat> channels;
   cv::split(tmp, channels); // channels = [B, G, R]
@@ -30,7 +38,14 @@ inline void Intensity(cv::Mat& image) {
   for (int i=0; i<3; i++) {
     channels[i] *= coef[i];
   }
-  cv::merge(channels, intensity_image);
+  return cv::merge(channels, intensity_image_);
 }
 
-inline cv::Vec3d ColorRatio(cv::Mat& image)
+inline cv::Vec3d ColorRatio(cv::Mat& image) {
+  std::vector<cv::Mat> channels;
+  cv::split(image, channels);
+  cv::Mat intensity_image = Intensity(image);
+  for (int i=0; i<3; i++) {
+    color_ratio_[i] = channels[i] / intensity_image;
+  }
+}
