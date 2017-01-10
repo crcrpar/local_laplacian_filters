@@ -10,8 +10,11 @@ The project is built using CMake and a C++11 compiler. I have developed the code
 ```
 #!bash
 mkdir build && cd build
-cmake ..
+cmake ../
 make
 ```
 
 The code has currently been tested for detail enhancement and reduction. Tone mapping is untested, but will be soon.
+
+*Below sentences were added by @crcrpar.*
+For tone manipulation, set branch :tone:
