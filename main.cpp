@@ -41,29 +41,6 @@ void OutputBinaryImage(const std::string& filename, cv::Mat image) {
   fclose(f);
 }
 
-//  Tone Mapping: calculate the intensity image and color ratio,
-//                then, perform local laplacian filtering.
-//
-// Arguments
-// input     The input image, only hdr.
-// alpha     The same as local laplacian filter
-// beta      The same as local laplacian filter
-// sigma_r   The same as local laplacian filter
-
-cv::Mat ToneManipulation(const cv::Mat& input, double alpha,
-  double beta, double sigma_r)
-{
-  cv::Mat tmp_img = input.clone(), intensity;
-  vector<cv::Mat> channels;
-  cv::split(tmp_img, channels);
-  double coefficients[] = {1/61.0, 40/61.0, 20/61.0};
-  for (int i=0; i<3; i++) {
-    channels[i] /= coefficients[i];
-  }
-  cv::merge(channels, intensity);
-
-}
-
 // Perform Local Laplacian filtering on the given image.
 //
 // Arguments:
@@ -143,9 +120,46 @@ cv::Mat LocalLaplacianFilter(const cv::Mat& input,
 
   return output.Reconstruct();
 }
-/*******************************main********************************/
+
+//  Tone Mapping: calculate the intensity image and color ratio,
+//                then, perform local laplacian filtering.
+//
+// Arguments
+// input     The input image, only hdr.
+// alpha     The same as local laplacian filter
+// beta      The same as local laplacian filter
+// sigma_r   The same as local laplacian filter
+template<typename T>
+cv::Mat ToneManipulation(const cv::Mat& input, double alpha,
+  double beta, double sigma_r)
+{
+  cout << "### Tone Manipulation ###" << endl;
+  cv::Mat tmp_img = input.clone(), intensity=cv::Mat(input.size(), CV_64FC1);
+  vector<cv::Mat> channels;
+  cv::split(tmp_img, channels);
+  float coefficients[] = {1/61.0, 40/61.0, 20/61.0};
+  for (int i=0; i<3; i++) {
+    intensity += channels[i] * coefficients[i];
+  }
+  // cv::merge(channels, intensity);
+  vector<cv::Mat> color_ratio;
+  // color_ratio: (\rho_r, \rho_g, \rho_b) = (I_r, I_g, I_b) / I_i
+  for (int i=0; i<3; i++) {
+    cout << "# cv::divide" << endl;
+    cv::Mat tmp;
+    // cv::divide(channels[i], intensity, tmp);
+    //  http://docs.opencv.org/3.2.0/d2/de8/group__core__array.html#ga6db555d30115642fedae0cda05604874
+    tmp = channels[i] / intensity;
+    // http://stackoverflow.com/questions/20975420/divide-two-matrices-in-opencv
+    color_ratio[i] = tmp;
+  }
+  cv::Mat compressed = LocalLaplacianFilter<double>(tmp_img, alpha, beta, sigma_r);
+}
+
+/****************************** main *******************************/
 int main(int argc, char** argv) {
-  cout << "# version: " << CV_VERSION << endl;
+  cout << "*** tone mapping ***" << endl;
+  cout << "# opencv version: " << CV_VERSION << endl;
   const double kSigmaR = log(0.25);
   const double kAlpha = 0.25;
   const double kBeta = 0;
@@ -164,35 +178,25 @@ int main(int argc, char** argv) {
     return 1;
   }
   showMinMax(input); // show min and max of input image.
-  imwrite("original."+ext, input);
+  cv::Mat tmp = input.clone();
+  tmp.convertTo(tmp, CV_8U, 255);
+  imwrite("original.png", tmp);
   // check whether the data type of `input` is not changed.
   showType(input);
-  input.convertTo(input, CV_64F, 1 / 255.0);
-
+  input.convertTo(input, CV_64F, 1.0, 0.0);
+  showMinMax(input);
   // test of ToneManipulation
-  cv::Mat test = ToneManipulation(input, kAlpha, kBeta, kSigmaR);
+  cv::Mat output = ToneManipulation<cv::Vec3d>(input, kAlpha, kBeta, kSigmaR);
 
   cout << "# Input image: " << GetFileName(filename) << endl
   << "# Size: " << input.cols << " x " << input.rows << endl
   << "# Channels: " << input.channels() << endl;
 
-  // execution of LocalLaplacianFilter
-  cv::Mat output;
-  if (input.channels() == 1) {
-    output = LocalLaplacianFilter<double>(input, kAlpha, kBeta, kSigmaR);
-  }
-  else if (input.channels() == 3) {
-    output = LocalLaplacianFilter<cv::Vec3d>(input, kAlpha, kBeta, kSigmaR);
-  }
-  else {
-    cerr << "Input image must have 1 or 3 channels." << endl;
-    return 1;
-  }
 
   output *= 255;
   output.convertTo(output, input.type());
 
-  imwrite("output."+ext, output);
+  imwrite("output.png", output);
 
   return 0;
 }
