@@ -3,6 +3,7 @@
 
 #include "opencv_utils.h"
 #include <iostream>
+#include <vector>
 
 // 3 parameters
 cv::Mat ByteScale(const cv::Mat& input, bool verbose) {
@@ -211,8 +212,18 @@ std::string GetFileName(const std::string &path) {
 
 void showMinMax(cv::Mat image) {
   double _min, _max;
-  cv::minMaxIdx(image, &_min, &_max);
-  std::cout << "# min: " << _min << ", max: " << _max << std::endl;
+  if (image.channels() == 1) {
+    cv::minMaxIdx(image, &_min, &_max);
+    std::cout << "# min: " << _min << ", max: " << _max << std::endl;
+  }
+  else if (image.channels() == 3) {
+    std::vector<cv::Mat> channels;
+    cv::split(image, channels);
+    for (int i=0; i<3; i++) {
+      cv::minMaxLoc(image, &_min, &_max);
+      std::cout << "# min: " << _min << ", max: " << _max << std::endl;
+    }
+  }
 }
 
 double getMax(cv::Mat image) {

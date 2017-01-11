@@ -137,14 +137,32 @@ cv::Mat ToneManipulation(const cv::Mat& input, double alpha,
   cout << "### Tone Manipulation ###" << endl;
   cv::Mat tmp_img = input.clone(), intensity=cv::Mat(input.size(), CV_64FC1);
   vector<cv::Mat> channels;
-  cv::split(tmp_img, channels);
+  cv::split(input, channels);
+  // cv::split(tmp_img, channels);
+  tmp_img.convertTo(tmp_img, CV_64F, 1.0, 0.0);
+  cv::imwrite("tmp_img.png", tmp_img);
+  cv::imwrite("blue_channel.png", channels[0]);
+  cv::imwrite("green_channel.png", channels[1]);
+  cv::imwrite("red_channel.png", channels[2]);
   float coefficients[] = {1/61.0, 40/61.0, 20/61.0};
   for (int i=0; i<3; i++) {
     intensity += channels[i] * coefficients[i];
   }
+  double intens_min, intens_max;
+  cv::Mat tmp = intensity.clone();
+  cv::minMaxLoc(intensity, &intens_min, &intens_max);
+  tmp.convertTo(tmp, CV_64F, 1/(intens_max-intens_min), -intens_min/(intens_max-intens_min));
+  tmp.convertTo(tmp, CV_8U, 255, 0);
+  cv::imwrite("intensity.png", tmp); // debug
+
   cv::Mat log_intensity = cv::Mat(intensity.size(), CV_64FC1);
   cv::log(intensity+1e-3, log_intensity);
-  // cv::merge(channels, intensity);
+  double alpha_, beta_;
+  cout << "# intensity ";
+  calcParams(intensity, &alpha_, &beta_);
+  cout << "# log intensity ";
+  calcParams(log_intensity, &alpha_, &beta_);
+
   vector<cv::Mat> color_ratio;
   // color_ratio: (\rho_r, \rho_g, \rho_b) = (I_r, I_g, I_b) / I_i
   for (int i=0; i<3; i++) {
@@ -156,9 +174,10 @@ cv::Mat ToneManipulation(const cv::Mat& input, double alpha,
     // divide-two-matrices-in-opencv
     color_ratio.push_back(tmp);
   }
+
   cv::Mat compressed = LocalLaplacianFilter<double>(log_intensity, alpha,
     beta, sigma_r);
-
+  cout << "# done mapping" << endl;
   double max_ = getMax(compressed);
   compressed -= max_; // set max 0
   cv::exp(compressed, compressed);
@@ -167,7 +186,6 @@ cv::Mat ToneManipulation(const cv::Mat& input, double alpha,
   cout << "compressed channels: " << compressed.channels() << endl;
   for (int i=0; i<3; i++) {
     if (color_ratio[i].size() == compressed.size()) {
-      cout << "same size" << endl;
       cv::multiply(compressed, color_ratio[i], color_ratio[i]);
     }
     else {
@@ -186,7 +204,7 @@ int main(int argc, char** argv) {
   cout << "# opencv version: " << CV_VERSION << endl;
   const double kSigmaR = log(0.25);
   const double kAlpha = 0.25;
-  const double kBeta = 0.01;
+  const double kBeta = 0.0;
 
   if (argc != 2) {
     cerr << "Usage: " << argv[0] << " image_file" << endl;
