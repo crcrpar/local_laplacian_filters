@@ -129,10 +129,11 @@ cv::Mat LocalLaplacianFilter(const cv::Mat& input,
 // alpha     The same as local laplacian filter
 // beta      The same as local laplacian filter
 // sigma_r   The same as local laplacian filter
-template<typename T>
+// template<typename T>
 cv::Mat ToneManipulation(const cv::Mat& input, double alpha,
   double beta, double sigma_r)
 {
+  // http://cs.brown.edu/courses/cs129/results/proj5/njooma/
   cout << "### Tone Manipulation ###" << endl;
   cv::Mat tmp_img = input.clone(), intensity=cv::Mat(input.size(), CV_64FC1);
   vector<cv::Mat> channels;
@@ -141,26 +142,42 @@ cv::Mat ToneManipulation(const cv::Mat& input, double alpha,
   for (int i=0; i<3; i++) {
     intensity += channels[i] * coefficients[i];
   }
+  cv::Mat log_intensity = cv::Mat(intensity.size(), CV_64FC1);
+  cv::log(intensity+1e-3, log_intensity);
   // cv::merge(channels, intensity);
   vector<cv::Mat> color_ratio;
   // color_ratio: (\rho_r, \rho_g, \rho_b) = (I_r, I_g, I_b) / I_i
   for (int i=0; i<3; i++) {
     cv::Mat tmp = channels[i].clone();
-    if (tmp.size() == intensity.size() &&
-    tmp.channels() == intensity.channels())
-    {
-      // cout << "Division" << endl;
-      // cout << "tmp "; showType(tmp);
-      // cout << "intensity: "; showType(intensity);
-      cv::divide(tmp, intensity, tmp);
-      cout << "divided" << endl;
-      // http://docs.opencv.org/3.2.0/d2/de8/group__core__array.html#ga6db555d30115642fedae0cda05604874
-      // http://stackoverflow.com/questions/20975420/divide-two-matrices-in-opencv
-      color_ratio.push_back(tmp);
-    }
+    cv::divide(tmp, intensity, tmp);
+    // http://docs.opencv.org/3.2.0/d2/de8/
+    // group__core__array.html#ga6db555d30115642fedae0cda05604874
+    // http://stackoverflow.com/questions/20975420/
+    // divide-two-matrices-in-opencv
+    color_ratio.push_back(tmp);
   }
-  cout << "color_ratio size: " << color_ratio.size() << endl;
-  cv::Mat compressed = LocalLaplacianFilter<double>(tmp_img, alpha, beta, sigma_r);
+  cv::Mat compressed = LocalLaplacianFilter<double>(log_intensity, alpha,
+    beta, sigma_r);
+
+  double max_ = getMax(compressed);
+  compressed -= max_; // set max 0
+  cv::exp(compressed, compressed);
+  compressed*=100;
+  showMinMax(compressed);
+  cout << "compressed channels: " << compressed.channels() << endl;
+  for (int i=0; i<3; i++) {
+    if (color_ratio[i].size() == compressed.size()) {
+      cout << "same size" << endl;
+      cv::multiply(compressed, color_ratio[i], color_ratio[i]);
+    }
+    else {
+      cout << "different size" << endl;
+    }
+    // color_ratio[i] *= compressed;
+  }
+  cv::Mat output;
+  cv::merge(color_ratio, output);
+  return output;
 }
 
 /****************************** main *******************************/
@@ -184,24 +201,26 @@ int main(int argc, char** argv) {
     cerr << "Could not read input image." << endl;
     return 1;
   }
-  showMinMax(input); // show min and max of input image.
+
   cv::Mat tmp = input.clone();
   tmp.convertTo(tmp, CV_8U, 255);
   imwrite("original.png", tmp);
   // check whether the data type of `input` is not changed.
   showType(input);
+  // change data type
   input.convertTo(input, CV_64F, 1.0, 0.0);
-  showMinMax(input);
-  // test of ToneManipulation
-  cv::Mat output = ToneManipulation<cv::Vec3d>(input, kAlpha, kBeta, kSigmaR);
-
   cout << "# Input image: " << GetFileName(filename) << endl
   << "# Size: " << input.cols << " x " << input.rows << endl
   << "# Channels: " << input.channels() << endl;
+  showMinMax(input); // show min and max of input image.
 
+  // Perform ToneManipulation
+  cv::Mat output = ToneManipulation(input, kAlpha, kBeta, kSigmaR);
 
   output *= 255;
-  output.convertTo(output, input.type());
+  double alpha_, beta_;
+  calcParams(output, &alpha_, &beta_);
+  output.convertTo(output, input.type(), alpha_, beta_);
 
   imwrite("output.png", output);
 
