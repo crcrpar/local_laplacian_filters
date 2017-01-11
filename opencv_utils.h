@@ -60,6 +60,7 @@ void GetRadialProfile(const cv::Mat& input, double theta,
 std::string GetExtension(const std::string &path);
 std::string GetFileName(const std::string&path);
 void showMinMax(cv::Mat image);
+double getMax(cv::Mat image);
 void showType(cv::Mat image);
 
 #endif  // OPENCV_UTILS_H

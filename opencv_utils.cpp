@@ -215,6 +215,12 @@ void showMinMax(cv::Mat image) {
   std::cout << "# min: " << _min << ", max: " << _max << std::endl;
 }
 
+double getMax(cv::Mat image) {
+  double min_, max_;
+  cv::minMaxIdx(image, &min_, &max_);
+  return max_;
+}
+
 void showType(cv::Mat image) {
   std::string dtype = GetMatDataType(image);
   std::cout << "# data type: " << dtype << std::endl;
