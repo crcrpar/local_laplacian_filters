@@ -139,11 +139,11 @@ cv::Mat ToneManipulation(const cv::Mat& input, double alpha,
   vector<cv::Mat> channels;
   cv::split(input, channels);
   // cv::split(tmp_img, channels);
-  tmp_img.convertTo(tmp_img, CV_64F, 1.0, 0.0);
-  cv::imwrite("tmp_img.png", tmp_img);
-  cv::imwrite("blue_channel.png", channels[0]);
-  cv::imwrite("green_channel.png", channels[1]);
-  cv::imwrite("red_channel.png", channels[2]);
+  // tmp_img.convertTo(tmp_img, CV_64F, 1.0, 0.0);
+  // cv::imwrite("tmp_img.png", tmp_img);
+  // cv::imwrite("blue_channel.png", channels[0]);
+  // cv::imwrite("green_channel.png", channels[1]);
+  // cv::imwrite("red_channel.png", channels[2]);
   float coefficients[] = {1/61.0, 40/61.0, 20/61.0};
   for (int i=0; i<3; i++) {
     intensity += channels[i] * coefficients[i];
@@ -234,7 +234,7 @@ int main(int argc, char** argv) {
 
   // Perform ToneManipulation
   cv::Mat output = ToneManipulation(input, kAlpha, kBeta, kSigmaR);
-
+  cv::normalize(output, output);
   output *= 255;
   double alpha_, beta_;
   calcParams(output, &alpha_, &beta_);
