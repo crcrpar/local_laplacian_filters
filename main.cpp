@@ -145,14 +145,21 @@ cv::Mat ToneManipulation(const cv::Mat& input, double alpha,
   vector<cv::Mat> color_ratio;
   // color_ratio: (\rho_r, \rho_g, \rho_b) = (I_r, I_g, I_b) / I_i
   for (int i=0; i<3; i++) {
-    cout << "# cv::divide" << endl;
-    cv::Mat tmp;
-    // cv::divide(channels[i], intensity, tmp);
-    //  http://docs.opencv.org/3.2.0/d2/de8/group__core__array.html#ga6db555d30115642fedae0cda05604874
-    tmp = channels[i] / intensity;
-    // http://stackoverflow.com/questions/20975420/divide-two-matrices-in-opencv
-    color_ratio[i] = tmp;
+    cv::Mat tmp = channels[i].clone();
+    if (tmp.size() == intensity.size() &&
+    tmp.channels() == intensity.channels())
+    {
+      // cout << "Division" << endl;
+      // cout << "tmp "; showType(tmp);
+      // cout << "intensity: "; showType(intensity);
+      cv::divide(tmp, intensity, tmp);
+      cout << "divided" << endl;
+      // http://docs.opencv.org/3.2.0/d2/de8/group__core__array.html#ga6db555d30115642fedae0cda05604874
+      // http://stackoverflow.com/questions/20975420/divide-two-matrices-in-opencv
+      color_ratio.push_back(tmp);
+    }
   }
+  cout << "color_ratio size: " << color_ratio.size() << endl;
   cv::Mat compressed = LocalLaplacianFilter<double>(tmp_img, alpha, beta, sigma_r);
 }
 
@@ -162,7 +169,7 @@ int main(int argc, char** argv) {
   cout << "# opencv version: " << CV_VERSION << endl;
   const double kSigmaR = log(0.25);
   const double kAlpha = 0.25;
-  const double kBeta = 0;
+  const double kBeta = 0.01;
 
   if (argc != 2) {
     cerr << "Usage: " << argv[0] << " image_file" << endl;
