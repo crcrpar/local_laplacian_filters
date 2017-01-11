@@ -162,6 +162,7 @@ cv::Mat ToneManipulation(const cv::Mat& input, double alpha,
   calcParams(intensity, &alpha_, &beta_);
   cout << "# log intensity ";
   calcParams(log_intensity, &alpha_, &beta_);
+  showMinMax(log_intensity);
 
   vector<cv::Mat> color_ratio;
   // color_ratio: (\rho_r, \rho_g, \rho_b) = (I_r, I_g, I_b) / I_i
@@ -177,16 +178,32 @@ cv::Mat ToneManipulation(const cv::Mat& input, double alpha,
 
   cv::Mat compressed = LocalLaplacianFilter<double>(log_intensity, alpha,
     beta, sigma_r);
+  showMinMax(compressed);
+  cv::Mat normalized_li = cv::Mat(log_intensity.size(), CV_64FC1);
+  cv::normalize(compressed, normalized_li, 0, 255, cv::NORM_MINMAX);
+  cv::imwrite("normalized.png", normalized_li);
   cout << "# done mapping" << endl;
   double max_ = getMax(compressed);
   compressed -= max_; // set max 0
-  cv::exp(compressed, compressed);
-  compressed*=100;
+  cv::Mat flatten_output = compressed.reshape(0, 1).clone();
+  cv::Mat sorted = flatten_output.clone();
+  cv::sort(flatten_output, sorted, CV_SORT_ASCENDING);
+  double alt_min = sorted.at<double>(0, int(sorted.cols*0.5/100));
+  double alt_max = sorted.at<double>(0, int(sorted.cols*99.5/100));
+  // compressed*=100;
   showMinMax(compressed);
+  compressed.convertTo(compressed, CV_64FC1, log(100.0)/(alt_max-alt_min), -log(100.0)*alt_max/(alt_max-alt_min));
+  // compressed.convertTo(compressed, CV_64FC1, 1.0/(alt_max - alt_min), -alt_min / (alt_max - alt_min));
+  showMinMax(compressed);
+  cv::Mat sample = cv::Mat(compressed.size(), CV_64FC1);
+  cv::normalize(compressed, sample, 0, 255, cv::NORM_MINMAX);
+  cv::imwrite("offset_compress.png", sample);
+  cv::exp(compressed, compressed);
+
   cout << "compressed channels: " << compressed.channels() << endl;
   for (int i=0; i<3; i++) {
     if (color_ratio[i].size() == compressed.size()) {
-      cv::multiply(compressed, color_ratio[i], color_ratio[i]);
+      cv::multiply(color_ratio[i], compressed, color_ratio[i]);
     }
     else {
       cout << "different size" << endl;
@@ -234,11 +251,11 @@ int main(int argc, char** argv) {
 
   // Perform ToneManipulation
   cv::Mat output = ToneManipulation(input, kAlpha, kBeta, kSigmaR);
-  cv::normalize(output, output);
+  // cv::normalize(output, output);
   output *= 255;
   double alpha_, beta_;
   calcParams(output, &alpha_, &beta_);
-  output.convertTo(output, input.type(), alpha_, beta_);
+  output.convertTo(output, CV_8U, alpha_, beta_);
 
   imwrite("output.png", output);
 
