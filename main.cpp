@@ -151,7 +151,7 @@ cv::Mat ToneManipulation(const cv::Mat& input, double alpha,
   double intens_min, intens_max;
   cv::Mat tmp = intensity.clone();
   cv::minMaxLoc(intensity, &intens_min, &intens_max);
-  tmp.convertTo(tmp, CV_64F, 1/(intens_max-intens_min), -intens_min/(intens_max-intens_min));
+  tmp.convertTo(tmp, CV_64F, 256/(intens_max-intens_min), +intens_min/(intens_max-intens_min));
   tmp.convertTo(tmp, CV_8U, 255, 0);
   cv::imwrite("intensity.png", tmp); // debug
 
